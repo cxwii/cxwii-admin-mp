@@ -1,34 +1,63 @@
 <script lang="ts" setup>
+// 使用scoped会导致pagee失效,因为他是最顶级父对象
+// 最好的方式就是再用一个单独<style></style>来设置
 import { ref } from 'vue'
-import CustomNavbar from '@/pages/index/components/customNavbar.vue'
-
+import { onLoad } from '@dcloudio/uni-app'
+import CustomNavbar from '@/pages/index/src/customNavbar.vue'
 import { useUserStore } from '@/store/modules/user'
-import { http } from '@/utils/http'
+import { loginApi } from '@/api/User/index'
+import type { cxwiiTestRefType } from '@/types/components'
+
+// 骨架文件,由开发者工具生成
+import indexSkeleton from '@/pages/index/indexSkeleton.vue'
 
 const userStore = useUserStore()
 userStore.setUsername('admin')
 uni.setStorageSync('username', userStore.getUsername)
 
+const userData = ref()
 const test = async () => {
-  const res = await http({
-    method: 'POST',
-    url: '/login'
+  const res = await loginApi({
+    username: 'admin',
+    password: '123456'
   })
   console.log('res :>> ', res)
+  console.log('res :>> ', res)
+  userData.value = res.data
 }
+
+// 实例的类型定义
+const cxwiiTestRef = ref<cxwiiTestRefType>()
+
+// 控制骨架屏(可以放在onLoad中,加载完数据前显示,加载完后隐藏)
+const isSkeleton = ref(false)
+
+onLoad(() => {
+  test()
+})
 </script>
 <template>
-  <CustomNavbar />
-  <view>首页</view>
-  <uni-card
-    title="基础卡片"
-    sub-title="副标题"
-    extra="额外信息"
-    thumbnail="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
-  >
-    <text>这是一个带头像和双标题的基础卡片，此示例展示了一个完整的卡片。</text>
-  </uni-card>
-  <button @click="test"> test </button>
+  <indexSkeleton v-if="isSkeleton" />
+  <template v-else>
+    <CustomNavbar />
+    <scroll-view scroll-y refresher-enabled>
+      <cxwiiTest ref="cxwiiTestRef" />
+      <view>首页</view>
+      <uni-card
+        title="基础卡片"
+        sub-title="副标题"
+        extra="额外信息"
+        thumbnail="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
+      >
+        <text>这是一个带头像和双标题的基础卡片，此示例展示了一个完整的卡片。</text>
+      </uni-card>
+      <button @click="test"> test </button>
+    </scroll-view>
+  </template>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+page {
+  background-color: pink;
+}
+</style>
