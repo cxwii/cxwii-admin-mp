@@ -24,6 +24,17 @@ const test = async () => {
   console.log('res :>> ', res)
   console.log('res :>> ', res)
   userData.value = res.data
+
+  const res2 = await uni.login()
+  console.log('登录 :>> ', res2)
+}
+
+const phonenumber: UniHelper.ButtonOnGetphonenumber = async (e) => {
+  const res = await uni.login()
+  // 一般登录就是这三个参数
+  console.log('小程序凭证 :>> ', res.code)
+  console.log('手机号 :>> ', e.detail.encryptedData)
+  console.log('加密用的算法 :>> ', e.detail.iv)
 }
 
 // 实例的类型定义
@@ -35,6 +46,25 @@ const isSkeleton = ref(false)
 onLoad(() => {
   test()
 })
+
+const test3 = () => {
+  uni.chooseMedia({
+    count: 1,
+    mediaType: ['image'],
+    success: (success) => {
+      console.log('success :>> ', success)
+      // 用这个api上传(给图片临时地址就好了)
+      // uni.uploadFile({
+      //   url: '',
+      //   fileType: 'image',
+      //   filePath: tempFilePaths[0],
+      //   name: 'file',
+      //   success: ({ data, statusCode }) => {},
+      //   fail: (error) => {}
+      // })
+    }
+  })
+}
 </script>
 <template>
   <indexSkeleton v-if="isSkeleton" />
@@ -52,6 +82,10 @@ onLoad(() => {
         <text>这是一个带头像和双标题的基础卡片，此示例展示了一个完整的卡片。</text>
       </uni-card>
       <button @click="test"> test </button>
+      <button open-type="getPhoneNumber" @getphonenumber="phonenumber"> 获取手机号码 </button>
+      <navigator url="/pages/test/test" hover-class="navigator-hover"> 跳转路由 </navigator>
+      <navigator url="/subPages/subPageTest/subPageTest"> 跳转子包 </navigator>
+      <button @click="test3"> 拍照api </button>
     </scroll-view>
   </template>
 </template>
