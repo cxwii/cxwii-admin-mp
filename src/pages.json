@@ -4,7 +4,7 @@
 		"custom": {
 			// uni-ui 规则如下配置
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
-			"^cxwii(.*)": "@/components/src/cxwii$1.vue"
+			"^cxwii(.*)": "@/components/cxwii$1.vue"
 		}
 	},
 	"pages": [

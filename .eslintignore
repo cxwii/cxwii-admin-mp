@@ -1,2 +1,7 @@
 # 骨架文件忽略
 indexSkeleton.vue
+# 测试文件也忽略一下
+test.vue
+# 插件文件忽略
+vk-data-input-number-box.vue
+vk-data-goods-sku-popup.vue

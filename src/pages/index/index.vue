@@ -65,6 +65,8 @@ const test3 = () => {
     }
   })
 }
+
+// sku算法
 </script>
 <template>
   <indexSkeleton v-if="isSkeleton" />
