@@ -10,6 +10,7 @@ import type { cxwiiTestRefType } from '@/types/components'
 
 // 骨架文件,由开发者工具生成
 import indexSkeleton from '@/pages/index/indexSkeleton.vue'
+import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 
 const userStore = useUserStore()
 userStore.setUsername('admin')
@@ -66,6 +67,12 @@ const test3 = () => {
   })
 }
 
+const count = ref(1)
+
+const onChange = (ev: InputNumberBoxEvent) => {
+  console.log('步进器 :>> ', ev)
+}
+
 // sku算法
 </script>
 <template>
@@ -85,9 +92,14 @@ const test3 = () => {
       </uni-card>
       <button @click="test"> test </button>
       <button open-type="getPhoneNumber" @getphonenumber="phonenumber"> 获取手机号码 </button>
-      <navigator url="/pages/test/test" hover-class="navigator-hover"> 跳转路由 </navigator>
+      <navigator url="/pages/test/test" hover-class="navigator-hover">
+        跳转路由(skuTest)
+      </navigator>
       <navigator url="/subPages/subPageTest/subPageTest"> 跳转子包 </navigator>
       <button @click="test3"> 拍照api </button>
+      <view>步进器</view>
+      <!-- 这里应该还要一个index作为唯一标识 -->
+      <vk-data-input-number-box v-model="count" :min="1" :max="100" @change="onChange" />
     </scroll-view>
   </template>
 </template>
