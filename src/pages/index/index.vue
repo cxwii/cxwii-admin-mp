@@ -2,7 +2,7 @@
 // 使用scoped会导致pagee失效,因为他是最顶级父对象
 // 最好的方式就是再用一个单独<style></style>来设置
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onReady } from '@dcloudio/uni-app'
 import CustomNavbar from '@/pages/index/src/customNavbar.vue'
 import { useUserStore } from '@/store/modules/user'
 import { loginApi } from '@/api/User/index'
@@ -73,13 +73,76 @@ const onChange = (ev: InputNumberBoxEvent) => {
   console.log('步进器 :>> ', ev)
 }
 
-// sku算法
+const test4 = () => {
+  // 可以用在自定义的导航按钮上,判断应该是返回首页还是上一页
+  // 或者用于拿页面实例
+  console.log('页面栈', getCurrentPages())
+}
+test4()
+
+// uniapp不支持这个微信小程序动画的类型,所以只能any
+// 也可以使用其他动画库来做
+const Elref = getCurrentPages().at(-1) as any
+
+onReady(() => {
+  // 动画效果,导航栏背景色
+  Elref.animate(
+    '.CustomNavbar', // 选择器
+    [ { backgroundColor: '#f8f8f8' }], // 关键帧信息
+    1000, // 动画持续时长
+    {
+      scrollSource: '#scroller', // scroll-view 的选择器
+      startScrollOffset: 100, // 开始滚动偏移量
+      endScrollOffset: 300, // 停止滚动偏移量
+      timeRange: 1000 // 时间长度
+    }
+  )
+  // 动画效果,导航栏标题
+  Elref.animate(
+    '.CustomNavbar .title',
+    [{ color: 'transparent' }, { color: '#000' }],
+    1000,
+    {
+      scrollSource: '#scroller',
+      timeRange: 1000,
+      startScrollOffset: 0,
+      endScrollOffset: 50
+    })
+  // 动画效果,导航栏返回按钮
+  Elref.animate('.CustomNavbar .back', [{ color: '#fff' }, { color: '#000' }], 1000, {
+    scrollSource: '#scroller',
+    timeRange: 1000,
+    startScrollOffset: 0,
+    endScrollOffset: 50
+  })
+})
+
+const timevalue = ref(10)
+// 倒计时结束触发的事件
+const timeup = () => {
+  console.log('倒计时结束 :>> ')
+}
+
+// 支付api
+// 这个就是微信支付的类型,主要是后端返回来的
+let typeTest: WechatMiniprogram.RequestPaymentOption
+const test5 = () => {
+  // 这个就是支付的接口,一般后端返回的字段直接扔进去就好了
+  // uni.requestPayment({
+  //   provider: uni.getProvider()
+  // })
+}
+
 </script>
 <template>
   <indexSkeleton v-if="isSkeleton" />
+
   <template v-else>
     <CustomNavbar />
-    <scroll-view scroll-y refresher-enabled>
+    <view class="CustomNavbar"
+      style="height: 109rpx;background-color: #000;">
+    </view>
+    <scroll-view id="scroller" scroll-y class="navbartest">
       <cxwiiTest ref="cxwiiTestRef" />
       <view>首页</view>
       <uni-card
@@ -100,12 +163,52 @@ const onChange = (ev: InputNumberBoxEvent) => {
       <view>步进器</view>
       <!-- 这里应该还要一个index作为唯一标识 -->
       <vk-data-input-number-box v-model="count" :min="1" :max="100" @change="onChange" />
+      <uni-countdown
+        :second="timevalue"
+        @timeup="timeup"
+      />
+      <button @click="test5"> 支付api </button>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
+      <view>1</view>
     </scroll-view>
   </template>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 page {
   background-color: pink;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.navbartest {
+  flex: 1;
+  // 一定要给个高度才生效(简直离谱)
+  height: 1rpx;
 }
 </style>
