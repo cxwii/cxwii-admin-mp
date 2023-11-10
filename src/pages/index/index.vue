@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-// 使用scoped会导致pagee失效,因为他是最顶级父对象
-// 最好的方式就是再用一个单独<style></style>来设置
 import { ref } from 'vue'
 import { onLoad, onReady } from '@dcloudio/uni-app'
 import CustomNavbar from '@/pages/index/src/customNavbar.vue'
@@ -49,6 +47,8 @@ onLoad(() => {
 })
 
 const test3 = () => {
+  // 多端之间的js api也有差异,有些uni做了处理,但也有没处理的,基本都要
+  // 一一做兼容
   uni.chooseMedia({
     count: 1,
     mediaType: ['image'],
@@ -88,7 +88,7 @@ onReady(() => {
   // 动画效果,导航栏背景色
   Elref.animate(
     '.CustomNavbar', // 选择器
-    [ { backgroundColor: '#f8f8f8' }], // 关键帧信息
+    [{ backgroundColor: '#f8f8f8' }], // 关键帧信息
     1000, // 动画持续时长
     {
       scrollSource: '#scroller', // scroll-view 的选择器
@@ -98,16 +98,12 @@ onReady(() => {
     }
   )
   // 动画效果,导航栏标题
-  Elref.animate(
-    '.CustomNavbar .title',
-    [{ color: 'transparent' }, { color: '#000' }],
-    1000,
-    {
-      scrollSource: '#scroller',
-      timeRange: 1000,
-      startScrollOffset: 0,
-      endScrollOffset: 50
-    })
+  Elref.animate('.CustomNavbar .title', [{ color: 'transparent' }, { color: '#000' }], 1000, {
+    scrollSource: '#scroller',
+    timeRange: 1000,
+    startScrollOffset: 0,
+    endScrollOffset: 50
+  })
   // 动画效果,导航栏返回按钮
   Elref.animate('.CustomNavbar .back', [{ color: '#fff' }, { color: '#000' }], 1000, {
     scrollSource: '#scroller',
@@ -133,15 +129,19 @@ const test5 = () => {
   // })
 }
 
+// 选择性编译
+// 用这个将需要选择性编译的内容包起来就可以了,后面那个是选择什么平台编译
+// 所以要写多个平台的部分代码,并选择性编译
+// #ifdef MP-WEIXIN
+
+// #endif
 </script>
 <template>
   <indexSkeleton v-if="isSkeleton" />
 
   <template v-else>
     <CustomNavbar />
-    <view class="CustomNavbar"
-      style="height: 109rpx;background-color: #000;">
-    </view>
+    <view class="CustomNavbar" style="height: 109rpx; background-color: #000" />
     <scroll-view id="scroller" scroll-y class="navbartest">
       <cxwiiTest ref="cxwiiTestRef" />
       <view>首页</view>
@@ -163,10 +163,7 @@ const test5 = () => {
       <view>步进器</view>
       <!-- 这里应该还要一个index作为唯一标识 -->
       <vk-data-input-number-box v-model="count" :min="1" :max="100" @change="onChange" />
-      <uni-countdown
-        :second="timevalue"
-        @timeup="timeup"
-      />
+      <uni-countdown :second="timevalue" @timeup="timeup" />
       <button @click="test5"> 支付api </button>
       <view>1</view>
       <view>1</view>
@@ -208,6 +205,20 @@ page {
 }
 .navbartest {
   flex: 1;
+  // 不支持*通配符选择器(小程序端中)
+  // 使用scoped会导致pagee失效,因为他是最顶级父对象
+  // 最好的方式就是再用一个单独style来设置
+
+  // uni提供一些内置的css变量,用于在h5端或者其他端中做适配
+  // 如bottom: var(--window-bottom);设置离TabBar的高度
+
+  // h5会自动开启scoped
+  // 但小程序不会,因为一个是单页面应用,但小程序是多页面应用
+  // 这样便会导致骨架屏的样式出现问题,因为骨架屏依赖页面样式,但被隔离了
+  // 所以有用到骨架屏的地方,应该抽离样式然后导入一份给骨架屏
+
+  // app端中则是没有page这个父标签,变成了id为app的父标签,所以也要修改
+
   // 一定要给个高度才生效(简直离谱)
   height: 1rpx;
 }

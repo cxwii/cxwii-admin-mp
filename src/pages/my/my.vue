@@ -2,7 +2,6 @@
 <template>
   <view>
     <view class="uni-padding-wrap uni-common-mt">
-      
       <view class="uni-title uni-common-mt">
         Vertical Scroll
         <text>\n纵向滚动</text>
@@ -15,7 +14,6 @@
           <view id="demo3" class="scroll-view-item uni-bg-blue">C</view>
         </scroll-view>
       </view>
-
     </view>
   </view>
 </template>
